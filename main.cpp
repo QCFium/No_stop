@@ -84,18 +84,15 @@ Ball* createNewBallIfNeeded() {
 	return NULL;
 }
 
-#define RESULT_CLEARED 0
-#define RESULT_FAILED 1
-#define RESULT_INTERRUPTED 2
-#define RESULT_CANCELED -1
-#define RESULT_ERROR -2
+#define RESULT_CONTINUE 0
+#define RESULT_EXIT     1
 int game() {
 	Ball* balls[MAX_BALLS] = { NULL };
 	int ball_num = 0;
 
-	int ret = RESULT_CANCELED;
+	int ret = RESULT_EXIT;
 	int heart_handle = LoadGraph("heart.png");
-	if (heart_handle == -1) return RESULT_ERROR;
+	if (heart_handle == -1) return ret;
 
 	// for fps handling
 	int last_frame_time = GetNowCount();
@@ -109,8 +106,8 @@ int game() {
 		// get key inputs
 		GetHitKeyStateAll(key_state);
 		if (key_state[KEY_INPUT_ESCAPE]) {
-			ret = RESULT_INTERRUPTED;
-			break; // press Esc to quit
+			ret = RESULT_CONTINUE;
+			break; // press Esc to return main menu(launcher())
 		}
 
 		// take the player and the balls to the next position
@@ -144,13 +141,13 @@ int game() {
 			drawHearts(heart_handle); // update
 			blinkDeadPlayer();
 			WaitKey();
-			ret = RESULT_FAILED;
+			ret = RESULT_CONTINUE;
 			break;
 		} else if (start_time + 1000 * MAX_SEC < GetNowCount()) {
 			// time over
 			showTimeOver();
 			WaitKey();
-			ret = RESULT_CLEARED;
+			ret = RESULT_CONTINUE;
 			break;
 		}
 	}
@@ -199,20 +196,17 @@ int launcher() {
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	int ret = 0;
-
-	if (!initWindow()) return 1;
+	if (!initWindow()) {
+		DxLib_End();
+		return 1;
+	};
 
 	while (1) {
 		int result = launcher();
-		if (result == RESULT_CANCELED) break;
-		else if (result == RESULT_ERROR) {
-			ret = 1;
-			break;
-		}
+		if (result == RESULT_EXIT) break;
 	}
 
 	DxLib_End();
 
-	return ret;
+	return 0;
 }
