@@ -53,10 +53,10 @@ public:
 
 /* creates a new ball */
 /* !! IMPORTANT !! */
-/* FREE the returned pointer YOURSELF */
+/* DELETE the returned pointer YOURSELF */
 Ball* newBall();
 
 /* creates a new treasure ball */
 /* !! IMPORTANT !! */
-/* FREE the returned pointer YOURSELF */
+/* DELETE the returned pointer YOURSELF */
 Ball* newTreasureBall();

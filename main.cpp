@@ -25,8 +25,9 @@ bool initWindow() {
 	return true;
 }
 
-bool judgeHits(Ball* balls[], int num) {
-	for (int i = 0; i < num; i++) {
+bool _judgeHits(Ball* balls[]) {
+	for (int i = 0; i < MAX_BALLS; i++) {
+		if (!balls[i]) return false; // no more ball
 		if (!balls[i]->inScreen) continue; // the ball has already gone out from the screen
 
 		// get distance of x and that of y
@@ -56,9 +57,9 @@ bool judgeHits(Ball* balls[], int num) {
 	return false;
 }
 
-void freeResources(Ball* balls[]) {
-	for (int i = 0; i < MAX_BALLS; i++) { // free(NULL); does nothing
-		delete(balls[i]);
+void _freeResources(Ball* balls[]) {
+	for (int i = 0; i < MAX_BALLS; i++) { // delete NULL; does nothing
+		delete balls[i];
 	}
 }
 
@@ -128,7 +129,7 @@ int game() {
 
 		// draw
 		ClearDrawScreen();
-		drawBalls(balls, ball_num);
+		drawBalls(balls);
 		drawPlayer();
 		drawScore();
 		drawHearts(heart_handle);
@@ -136,7 +137,7 @@ int game() {
 		ScreenFlip();
 
 		// finish if needed
-		if (judgeHits(balls, ball_num)) {
+		if (_judgeHits(balls)) {
 			// you died... too bad
 			drawHearts(heart_handle); // update
 			blinkDeadPlayer();
@@ -151,7 +152,7 @@ int game() {
 			break;
 		}
 	}
-	freeResources(balls);
+	_freeResources(balls);
 	return ret;
 }
 

@@ -3,7 +3,7 @@
 #include "ball.h"
 
 /* draw given balls to the screen */
-void drawBalls(Ball* balls[], int num);
+void drawBalls(Ball* balls[]);
 
 /* show blinking animation for dead player */
 void blinkDeadPlayer();

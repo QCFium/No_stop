@@ -20,8 +20,9 @@ void waitMsec(int msec) {
 }
 
 // draw given balls to the screen
-void drawBalls(Ball* balls[], int num) {
-	for (int i = 0; i < num; i++) {
+void drawBalls(Ball* balls[]) {
+	for (int i = 0; i < MAX_BALLS; i++) {
+		if (!balls[i]) return; // no more ball
 		if (!balls[i]->inScreen) continue;
 		if (balls[i]->inScreen) // if it's still in the window...
 			DrawCircle(balls[i]->x, balls[i]->y, balls[i]->circle_r,
