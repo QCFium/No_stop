@@ -10,18 +10,22 @@ int BALL_INTERVAL_MSEC = 700;
 
 bool initWindow() {
 	SetDoubleStartValidFlag(TRUE); // allow double starting
-	SetOutApplicationLogValidFlag(FALSE); // disable logging into a file
-	if (DxLib_Init() == -1) return false;
+	SetOutApplicationLogValidFlag(TRUE); // enable logging into a file
+	if (DxLib_Init() == -1 || 
+		SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK) return false;
 
+#ifdef WINDOW_MODE
 	if (
 		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
-		SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK ||
 		SetWindowSize(SCREEN_SIZE_X, SCREEN_SIZE_Y) == -1 ||
 		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1 ||
+#endif
 
+	if (
 		SetDrawScreen(DX_SCREEN_BACK) == -1 || // draw to backside
 		SetWindowText(APPLICATION_NAME) != 0)
 		return false;
+
 	return true;
 }
 
@@ -58,8 +62,9 @@ bool _judgeHits(Ball* balls[]) {
 }
 
 void _freeResources(Ball* balls[]) {
-	for (int i = 0; i < MAX_BALLS; i++) { // delete NULL; does nothing
-		delete balls[i];
+	for (int i = 0; i < MAX_BALLS; i++) {
+		delete balls[i]; // delete NULL; does nothing
+		balls[i] = NULL; // just to be safe
 	}
 }
 

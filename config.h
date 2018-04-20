@@ -3,9 +3,10 @@
 // application name
 #define APPLICATION_NAME "é~Ç‹ÇÍÇ‹ÇπÅ[ÇÒ"
 
-// screen resolution
-#define SCREEN_SIZE_X 960
-#define SCREEN_SIZE_Y 720
+// about screen
+#define SCREEN_SIZE_X 1024
+#define SCREEN_SIZE_Y 768
+// #define WINDOW_MODE
 
 // about game
 #define MAX_SEC 60
@@ -18,7 +19,7 @@
 extern int BALL_INTERVAL_MSEC; // time interval between a ball created and the next ball created(mili seconds)
 
 #define TREASURE_INTERVAL_MSEC 6000 // same as above, but for a treasure
-#define WAIT_AFTER_SHOW_RESULT_MSEC 2000
+#define WAIT_AFTER_SHOW_RESULT_MSEC 1000
 
 // the speed of balls
 #define BALL_SPEED_RANDOM_FAST (rand() % 6 + 1)
