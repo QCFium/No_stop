@@ -75,6 +75,9 @@ artifacts/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.sln
+*.iobj
+*.ipdb
 Log.txt
 
 # Chutzpah Test files
