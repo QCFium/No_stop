@@ -12,6 +12,7 @@ static int speed_y;
 static int score;
 static int life_left;
 static int last_damaged_time;
+
 static int last_increased_time;
 
 int getPlayerX() { return x; }

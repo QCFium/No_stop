@@ -47,45 +47,28 @@ void drawHearts(int heart_handle) {
 
 // draw score on playing screen
 void drawScore() {
-	static int last_score = 0;
-	static int last_increase_time = 0;
+	int time_from_last = getTimeElapsedFromLastIncrease();
 
-	if (getPlayerScore() < last_score) {
-		last_score = 0;
-		last_increase_time = 0;
-	} else if (getPlayerScore() > last_score) {
-		last_increase_time = GetNowCount();
-		last_score = getPlayerScore();
-	}
-
-	bool increasing = (last_increase_time + SCORE_BLINK_INTERVAL_MSEC * SCORE_BLINK_NUM > GetNowCount());
-	bool show = !increasing || ((GetNowCount() - last_increase_time) / SCORE_BLINK_INTERVAL_MSEC) % 2;
-
-	int font = GetDefaultFontHandle();
-	int size;
-	GetFontStateToHandle(NULL, &size, NULL, font);
+	bool increasing = time_from_last < SCORE_BLINK_INTERVAL_MSEC * SCORE_BLINK_NUM;
+	bool change_color = increasing && (time_from_last / SCORE_BLINK_INTERVAL_MSEC) % 2;
 
 	char score_str[64];
 	snprintf(score_str, 63, "%s%d", SCORE_STR, getPlayerScore());
 
 	int width = GetDrawStringWidth(score_str, strlen_mb(score_str));
-	DrawString(0, 0, score_str, show ? COLOR_MSG : COLOR_SCORE_INCREASING);
+	DrawFormatString(0, 0, change_color ? COLOR_SCORE_INCREASING : COLOR_MSG, "%s%d", SCORE_STR, getPlayerScore);
 }
 
 void drawTimeLeft(int start_time) {
 	int time_elapsed_msec = GetNowCount() - start_time;
 	int sec_left = MAX_SEC - time_elapsed_msec/1000;
+	if (sec_left < 0) sec_left = 0;
 
 	char time_str[16];
 	snprintf(time_str, 15, "Žc‚è%d•b", sec_left);
 	int width = GetDrawStringWidth(time_str, strlen_mb(time_str));
 
 	DrawString(SCREEN_SIZE_X - width, 0, time_str, sec_left < 10 ? COLOR_LOW_TIME : COLOR_MSG);
-}
-
-void drawPointAddStr() {
-	int time_from_last_increase = getTimeElapsedFromLastIncrease();
-	
 }
 
 // draw score on result screen
