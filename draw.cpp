@@ -90,7 +90,7 @@ void drawTimeLeft(int start_time) {
 }
 
 // draw score on result screen
-void _drawScore() {
+void _drawScoreResult() {
 	char score_str[64];
 	snprintf(score_str, 63, "%s%d", SCORE_STR, getPlayerScore());
 	
@@ -121,7 +121,7 @@ void blinkDeadPlayer() {
 	int gameover_str_width = GetDrawStringWidth(GAMEOVER_STR, strlen_mb(GAMEOVER_STR));
 	DrawString((SCREEN_SIZE_X - gameover_str_width)/2, RESULT_RESULT_POSITION_Y, GAMEOVER_STR, COLOR_MSG);
 
-	_drawScore();
+	_drawScoreResult();
 	ScreenFlip();
 	Sleep(WAIT_AFTER_SHOW_RESULT_MSEC);
 	_drawAnykeyMessage();
@@ -133,7 +133,7 @@ void showTimeOver() {
 	int gameover_str_width = GetDrawFormatStringWidth(TIMEOVER_STR, MAX_SEC);
 	DrawFormatString((SCREEN_SIZE_X - gameover_str_width) / 2, RESULT_RESULT_POSITION_Y, COLOR_MSG, TIMEOVER_STR, MAX_SEC);
 
-	_drawScore();
+	_drawScoreResult();
 	ScreenFlip();
 	Sleep(WAIT_AFTER_SHOW_RESULT_MSEC);
 	_drawAnykeyMessage();
