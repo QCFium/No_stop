@@ -9,16 +9,17 @@
 class TreasureBall : public Ball {
 public:
 	TreasureBall() {
-		color = GetColor(0, 255, 0);
+		typeId = TYPE_TREASURE;
 		circle_r = 20;
 		rebound_num = 10000; // infinite
+		isTreasure = true;
 	}
 };
 
 class OrangeBall : public Ball {
 public:
 	OrangeBall() {
-		color = GetColor(255, 165, 0);
+		typeId = TYPE_BALL0;
 		circle_r = 15;
 		rebound_num = 0;
 	}
@@ -27,7 +28,7 @@ public:
 class PurpleBall : public Ball {
 public:
 	PurpleBall() {
-		color = GetColor(255, 0, 255);
+		typeId = TYPE_BALL1;
 		circle_r = 10;
 		rebound_num = 0;
 	}
@@ -36,7 +37,7 @@ public:
 class YellowBall : public Ball {
 public:
 	YellowBall() {
-		color = GetColor(255, 255, 0);
+		typeId = TYPE_BALL2;
 		circle_r = 30;
 		rebound_num = 0;
 	}
@@ -45,7 +46,7 @@ public:
 class BlueBall : public Ball {
 public:
 	BlueBall() {
-		color = GetColor(0, 0, 255);
+		typeId = TYPE_BALL3;
 		circle_r = 15;
 		rebound_num = 1;
 	}
@@ -103,8 +104,6 @@ Ball* newBall() {
 		ball->speed_x = BALL_SPEED_RANDOM_SLOW; // move horizontally slower
 		ball->speed_y = -BALL_SPEED_RANDOM_FAST; // speed is always 2 - 6
 	}
-	ball->inScreen = true;
-	ball->isTreasure = false;
 	ball->rebounded_count = 0;
 	return ball;
 }
@@ -120,7 +119,5 @@ Ball* newTreasureBall() {
 	ball->y = (rand() % 2) ? 0 : SCREEN_SIZE_Y;
 	ball->speed_x = rand() % 5 + 2;
 	ball->speed_y = rand() % 5 + 2;
-	ball->inScreen = true;
-	ball->isTreasure = true;
 	return ball;
 }

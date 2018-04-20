@@ -5,20 +5,31 @@
 #include "ball.h"
 #include "player.h"
 #include "draw.h"
+#include "error.h"
 
-int BALL_INTERVAL_MSEC = 700;
+// graphic handles
+int heart_handle;
+int treasure_handle;
+int ball0_handle;
+int ball1_handle;
+int ball2_handle;
+int ball3_handle;
 
-bool initWindow() {
-	SetDoubleStartValidFlag(TRUE); // allow double starting
-	SetOutApplicationLogValidFlag(TRUE); // enable logging into a file
+bool _initWindow() {
+#ifndef ENABLE_LOG
+	SetOutApplicationLogValidFlag(FALSE); // enable logging into a file
+#endif
+
 	if (DxLib_Init() == -1 || 
 		SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK) return false;
 
 #ifdef WINDOW_MODE
+	SetDoubleStartValidFlag(TRUE); // allow double starting
 	if (
 		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
 		SetWindowSize(SCREEN_SIZE_X, SCREEN_SIZE_Y) == -1 ||
-		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1 ||
+		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1)
+		return false;
 #endif
 
 	if (
@@ -29,6 +40,20 @@ bool initWindow() {
 	return true;
 }
 
+bool _loadImages() {
+	heart_handle = LoadGraph(RESOURCE_DIR_NAME "/heart.png");
+	treasure_handle = LoadGraph(RESOURCE_DIR_NAME "/treasure.png");
+	ball0_handle = LoadGraph(RESOURCE_DIR_NAME "/ball0.png");
+	ball1_handle = LoadGraph(RESOURCE_DIR_NAME "/ball1.png");
+	ball2_handle = LoadGraph(RESOURCE_DIR_NAME "/ball2.png");
+	ball3_handle = LoadGraph(RESOURCE_DIR_NAME "/ball3.png");
+	return (heart_handle != -1 && treasure_handle != 0 &&
+			ball0_handle != -1 && ball1_handle != -1 &&
+			ball2_handle != -1 && ball3_handle != -1);
+			
+}
+
+/* return if it's game over */
 bool _judgeHits(Ball* balls[]) {
 	for (int i = 0; i < MAX_BALLS; i++) {
 		if (!balls[i]) return false; // no more ball
@@ -42,20 +67,16 @@ bool _judgeHits(Ball* balls[]) {
 
 		// use Archimedes' theorem(!?) to judge
 		int r_sum = PLAYER_CIRCLE_R + balls[i]->circle_r;
-		bool ret = (r_sum * r_sum > (distance_x * distance_x) + (distance_y * distance_y));
+		bool hit = (r_sum * r_sum > (distance_x * distance_x) + (distance_y * distance_y));
 
 		if (balls[i]->isTreasure) {
-			if (ret) {
+			if (hit) {
 				balls[i]->inScreen = false; // it's gotten
 				increasePlayerScore();
 				return false; // it's not game over
 			}
 		} else {
-			if (ret) {
-				bool died = killPlayer();
-				if (!died) balls[i]->inScreen = false;
-				return died;
-			}
+			if (hit) return ((balls[i]->inScreen = killPlayer())); // if player still alive, remove the ball from screen
 		}
 	}
 	return false;
@@ -68,7 +89,7 @@ void _freeResources(Ball* balls[]) {
 	}
 }
 
-Ball* createNewBallIfNeeded() {
+Ball* _createNewBallIfNeeded() {
 	static int last_ball_created_time = 0;
 	static int last_treasure_crated_time = 0;
 	if (last_ball_created_time == 0) last_ball_created_time = GetNowCount();
@@ -77,6 +98,7 @@ Ball* createNewBallIfNeeded() {
 	// treasure ball creation
 	if (last_treasure_crated_time < GetNowCount() - TREASURE_INTERVAL_MSEC) {
 		Ball* new_treasure = newTreasureBall();
+		if (new_treasure) new_treasure->imageHandle = treasure_handle;
 		last_treasure_crated_time = GetNowCount();
 		return new_treasure;
 	}
@@ -84,6 +106,10 @@ Ball* createNewBallIfNeeded() {
 	// normal ball(enemy) creation
 	if (last_ball_created_time < GetNowCount() - BALL_INTERVAL_MSEC) { // interval from the last creation
 		Ball* newball = newBall();
+		if (newball) newball->imageHandle = (newball->typeId == TYPE_BALL0) ? ball0_handle :
+											(newball->typeId == TYPE_BALL1) ? ball1_handle :
+											(newball->typeId == TYPE_BALL2) ? ball2_handle :
+											(newball->typeId == TYPE_BALL3) ? ball3_handle : -1;
 		last_ball_created_time = GetNowCount();
 		return newball;
 	}
@@ -97,8 +123,6 @@ int game() {
 	int ball_num = 0;
 
 	int ret = RESULT_EXIT;
-	int heart_handle = LoadGraph("heart.png");
-	if (heart_handle == -1) return ret;
 
 	// for fps handling
 	int last_frame_time = GetNowCount();
@@ -123,7 +147,7 @@ int game() {
 
 		// new ball if needed
 		Ball* newball;
-		if (ball_num + 1 < MAX_BALLS && (newball = createNewBallIfNeeded())) {
+		if (ball_num + 1 < MAX_BALLS && (newball = _createNewBallIfNeeded())) {
 			balls[ball_num] = newball;
 			ball_num++;
 		}
@@ -177,14 +201,14 @@ int launcher() {
 		bool last_f7_pressed = false;
 		while (ProcessMessage() == 0) {
 			if (key_state[KEY_INPUT_F6] && !last_f6_pressed) {
-				BALL_INTERVAL_MSEC += 50;
+				uncomplicate();
 				ClearDrawScreen();
 				drawInstruction();
 				DrawFormatString(0, 0, GetColor(0, 0, 255), "Entering configuration : %d", BALL_INTERVAL_MSEC);
 				ScreenFlip();
 				last_f6_pressed = true;
 			} else if (key_state[KEY_INPUT_F7] && !last_f7_pressed) {
-				BALL_INTERVAL_MSEC -= 50;
+				complicate();
 				ClearDrawScreen();
 				drawInstruction();
 				DrawFormatString(0, 0, GetColor(255, 0, 0), "Entering configuration : %d", BALL_INTERVAL_MSEC);
@@ -202,14 +226,14 @@ int launcher() {
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	if (!initWindow()) {
-		DxLib_End();
-		return 1;
-	};
-
-	while (1) {
-		int result = launcher();
-		if (result == RESULT_EXIT) break;
+	if (!initConfig()) error("Failed to init config");
+	else if (!_initWindow()) error("Failed to init window");
+	else if (!_loadImages()) error("failed to load images");
+	else {
+		while (1) {
+			int result = launcher();
+			if (result == RESULT_EXIT) break;
+		}
 	}
 
 	DxLib_End();

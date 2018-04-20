@@ -17,10 +17,11 @@ void drawHearts(int heart_handle);
 /* show score string on top left */
 void drawScore();
 
+/* show the time left at top right */
 void drawTimeLeft(int start_time);
 
 /* show that time is over */
 void showTimeOver();
 
-
+/* Draw instruction message */
 void drawInstruction();

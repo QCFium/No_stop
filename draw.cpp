@@ -12,21 +12,15 @@
 #define RESULT_SCORE_POSITION_Y  (SCREEN_SIZE_Y - 100)
 #define RESULT_ANYKEY_POSITION_Y (SCREEN_SIZE_Y - 60)
 
-
-void waitMsec(int msec) {
-	if (msec <= 0) return;
-	int start_time = GetNowCount();
-	while (ProcessMessage() == 0 && start_time + msec > GetNowCount());
-}
-
 // draw given balls to the screen
 void drawBalls(Ball* balls[]) {
 	for (int i = 0; i < MAX_BALLS; i++) {
 		if (!balls[i]) return; // no more ball
 		if (!balls[i]->inScreen) continue;
 		if (balls[i]->inScreen) // if it's still in the window...
-			DrawCircle(balls[i]->x, balls[i]->y, balls[i]->circle_r,
-				balls[i]->color, 32);
+			DrawGraph(balls[i]->x - balls[i]->circle_r,
+					  balls[i]->y - balls[i]->circle_r,
+					  balls[i]->imageHandle, TRUE);
 	}
 }
 
@@ -43,7 +37,7 @@ void drawPlayer() {
 void drawHearts(int heart_handle) {
 	int lives = getLifeNumLeft();
 	if (!lives) { // no more lives, erase all hearts
-		DrawBox(0, 30, 30 * 4, 60, COLOR_BACKGROUND, TRUE);
+		DrawBox(0, 30, 30, 60, COLOR_BACKGROUND, TRUE);
 	} else {
 		for (int i = 0; i < lives; i++) {
 			DrawGraph(i * 30, 30, heart_handle, TRUE);
@@ -89,6 +83,11 @@ void drawTimeLeft(int start_time) {
 	DrawString(SCREEN_SIZE_X - width, 0, time_str, sec_left < 10 ? COLOR_LOW_TIME : COLOR_MSG);
 }
 
+void drawPointAddStr() {
+	int time_from_last_increase = getTimeElapsedFromLastIncrease();
+	
+}
+
 // draw score on result screen
 void _drawScoreResult() {
 	char score_str[64];
@@ -114,7 +113,7 @@ void blinkDeadPlayer() {
 
 		if (++blink_count >= DEAD_PLAYER_BLINK_NUM) break;
 		hit_color_used = !hit_color_used;
-		waitMsec(DEAD_PLAYER_BLINK_INTERVAL_MSEC);
+		Sleep(DEAD_PLAYER_BLINK_INTERVAL_MSEC);
 	}
 
 	// draw that it's over
@@ -142,11 +141,11 @@ void showTimeOver() {
 
 void drawInstruction() {
 	const char* instruction_str1 = "矢印キー(上下左右)で画面上の白い球を操作してください。";
-	const char* instruction_str2 = "緑色の玉に触れると%dポイント加算されます。";
-	const char* instruction_str3 = "それ以外の色の玉に触れると残りのライフが減ってしまいます。";
+	const char* instruction_str2 = "緑色の玉(宝)に触れると%dポイント加算されます。";
+	const char* instruction_str3 = "敵に触れると残りのライフが減ってしまいます。";
 	const char* instruction_str4 = "残りライフが0になるとゲームオーバーです。";
 	const char* instruction_str5 = "開始から%d秒経っても終わりです。";
-	const char* instruction_str6 = "つまり%d秒以内に他のボールに当たらずに何個緑を回収できるかが勝負です";
+	const char* instruction_str6 = "つまり%d秒以内に他のボールに当たらずに何個宝を回収できるかが勝負です";
 
 	int width = GetDrawFormatStringWidth(instruction_str1); // hacky(only checking about str1)
 	int str_x = (SCREEN_SIZE_X - width) / 2;

@@ -15,6 +15,7 @@ bool killPlayer();
 int getLifeNumLeft();
 
 int getTimeElapsedFromLastDamage();
+int getTimeElapsedFromLastIncrease();
 
 /* handle key input and go it to the next position */
 void playerGoNextPosition(char* key_state);

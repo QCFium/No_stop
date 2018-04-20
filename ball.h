@@ -2,18 +2,25 @@
 
 #include "config.h"
 
+#define TYPE_TREASURE 0
+#define TYPE_BALL0    1
+#define TYPE_BALL1    2
+#define TYPE_BALL2    3
+#define TYPE_BALL3    4
+
 class Ball {
 public:
+	int typeId;
 	int x;
 	int y;
 	int speed_x;
 	int speed_y;
-	bool inScreen;
-	bool isTreasure;
+	bool inScreen = true;
+	bool isTreasure = false;
 	int rebound_num;
 	int rebounded_count;
 
-	unsigned int color;
+	int imageHandle = -1;
 	int circle_r;
 
 	// returns if the ball is still in the screen
