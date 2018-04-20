@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	
-	printf(APPLICATION_NAME);
+	printf(APPLICATION_NAME " : ");
 	setTerminalColor(TXT_BRIGHT | TXT_R);
 	printf("\nFATAL : %s", argv[1]);
 	for (int i = 3; i <= argc; i++) {

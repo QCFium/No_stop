@@ -4,6 +4,6 @@
 
 void error(const char* msg) {
 	char errmsg[256];
-	snprintf(errmsg, 255, "start echo off^&echo é~Ç‹ÇÍÇ‹ÇπÅ[ÇÒ^&echo FATAL : %s^&pause^&exit", msg);
+	snprintf(errmsg, 255, "start echo off^&error %s", msg);
 	system(errmsg);
 }
