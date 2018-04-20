@@ -13,12 +13,12 @@ bool initWindow() {
 	SetOutApplicationLogValidFlag(FALSE); // disable logging into a file
 	if (DxLib_Init() == -1) return false;
 
-		// set resolution
-	if (SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1 ||
+	if (
+		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
 		SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK ||
 		SetWindowSize(SCREEN_SIZE_X, SCREEN_SIZE_Y) == -1 ||
+		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1 ||
 
-		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
 		SetDrawScreen(DX_SCREEN_BACK) == -1 || // draw to backside
 		SetWindowText(APPLICATION_NAME) != 0)
 		return false;
