@@ -49,14 +49,10 @@ void drawHearts(int heart_handle) {
 void drawScore() {
 	int time_from_last = getTimeElapsedFromLastIncrease();
 
-	bool increasing = time_from_last < SCORE_BLINK_INTERVAL_MSEC * SCORE_BLINK_NUM;
+	bool increasing = time_from_last != -1 && time_from_last < SCORE_BLINK_INTERVAL_MSEC * SCORE_BLINK_NUM;
 	bool change_color = increasing && (time_from_last / SCORE_BLINK_INTERVAL_MSEC) % 2;
 
-	char score_str[64];
-	snprintf(score_str, 63, "%s%d", SCORE_STR, getPlayerScore());
-
-	int width = GetDrawStringWidth(score_str, strlen_mb(score_str));
-	DrawFormatString(0, 0, change_color ? COLOR_SCORE_INCREASING : COLOR_MSG, "%s%d", SCORE_STR, getPlayerScore);
+	DrawFormatString(0, 0, change_color ? COLOR_SCORE_INCREASING : COLOR_MSG, "%s%d", SCORE_STR, getPlayerScore());
 }
 
 void drawTimeLeft(int start_time) {

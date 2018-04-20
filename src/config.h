@@ -23,11 +23,24 @@
 #define PLAYER_LIVES 3
 
 #define MAX_BALLS 1000
-#define BALL_INTERVAL_MSEC getBallIntervalMsec()
 
-#define TREASURE_INTERVAL_MSEC 6000 // same as above, but for a treasure
+// ball creation interval
+#define BALL_LVL1_START_SEC 15
+#define BALL_LVL2_START_SEC 40
+#define BALL_LVL0_INTERVAL_DEFAULT_MSEC 1000
+#define BALL_LVL1_INTERVAL_DEFAULT_MSEC 700
+#define BALL_LVL2_INTERVAL_DEFAULT_MSEC 500
+
+// treasure creation interval
+#define TREASURE_LVL1_START_SEC 15
+#define TREASURE_LVL2_START_SEC 40
+#define TREASURE_LVL0_INTERVAL_DEFAULT_MSEC 6000
+#define TREASURE_LVL1_INTERVAL_DEFAULT_MSEC 8000
+#define TREASURE_LVL2_INTERVAL_DEFAULT_MSEC 4000
+
 #define WAIT_AFTER_SHOW_RESULT_MSEC 1000
 
+// resource dir
 #define RESOURCE_DIR_NAME "res"
 
 // the speed of balls
@@ -58,7 +71,9 @@
 #define SCORE_STR "スコア : "
 #define ANYKEY_STR "何かキーを押してください..."
 
-int getBallIntervalMsec();
+int getBallIntervalMsec(int start_time);
+int getTreasureIntervalMsec(int start_time);
+int getBallIntervalAdjustion();
 void complicate();
 void uncomplicate();
 

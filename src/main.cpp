@@ -15,6 +15,9 @@ int ball1_handle;
 int ball2_handle;
 int ball3_handle;
 
+#define TREASURE_INTERVAL_MSEC(t) getTreasureIntervalMsec(t)
+#define BALL_INTERVAL_MSEC(t) getBallIntervalMsec(t)
+
 bool _initWindow() {
 #ifndef ENABLE_LOG
 	SetOutApplicationLogValidFlag(FALSE); // enable logging into a file
@@ -50,7 +53,31 @@ bool _loadImages() {
 	return (heart_handle != -1 && treasure_handle != 0 &&
 			ball0_handle != -1 && ball1_handle != -1 &&
 			ball2_handle != -1 && ball3_handle != -1);
-			
+}
+
+void _freeResources() {
+	// unload graphics
+	DeleteGraph(heart_handle);
+	DeleteGraph(treasure_handle);
+	DeleteGraph(ball0_handle);
+	DeleteGraph(ball1_handle);
+	DeleteGraph(ball2_handle);
+	DeleteGraph(ball3_handle);
+
+	// just to be safe
+	heart_handle = -1;
+	treasure_handle = -1;
+	ball0_handle = -1;
+	ball1_handle = -1;
+	ball2_handle = -1;
+	ball3_handle = -1;
+}
+
+void _deleteBalls(Ball* balls[]) {
+	for (int i = 0; i < MAX_BALLS; i++) {
+		delete balls[i]; // delete NULL; does nothing
+		balls[i] = NULL; // just to be safe
+	}
 }
 
 /* return if it's game over */
@@ -82,29 +109,22 @@ bool _judgeHits(Ball* balls[]) {
 	return false;
 }
 
-void _freeResources(Ball* balls[]) {
-	for (int i = 0; i < MAX_BALLS; i++) {
-		delete balls[i]; // delete NULL; does nothing
-		balls[i] = NULL; // just to be safe
-	}
-}
-
-Ball* _createNewBallIfNeeded() {
+Ball* _createNewBallIfNeeded(int start_time) {
 	static int last_ball_created_time = 0;
-	static int last_treasure_crated_time = 0;
-	if (last_ball_created_time == 0) last_ball_created_time = GetNowCount();
-	if (last_treasure_crated_time == 0) last_treasure_crated_time = GetNowCount();
+	static int last_treasure_created_time = 0;
+	if (last_ball_created_time == 0 || last_ball_created_time < start_time) last_ball_created_time = GetNowCount();
+	if (last_treasure_created_time == 0 || last_treasure_created_time < start_time) last_treasure_created_time = GetNowCount();
 
 	// treasure ball creation
-	if (last_treasure_crated_time < GetNowCount() - TREASURE_INTERVAL_MSEC) {
+	if (last_treasure_created_time < GetNowCount() - TREASURE_INTERVAL_MSEC(start_time)) {
 		Ball* new_treasure = newTreasureBall();
 		if (new_treasure) new_treasure->imageHandle = treasure_handle;
-		last_treasure_crated_time = GetNowCount();
+		last_treasure_created_time = GetNowCount();
 		return new_treasure;
 	}
 
 	// normal ball(enemy) creation
-	if (last_ball_created_time < GetNowCount() - BALL_INTERVAL_MSEC) { // interval from the last creation
+	if (last_ball_created_time < GetNowCount() - BALL_INTERVAL_MSEC(start_time)) { // interval from the last creation
 		Ball* newball = newBall();
 		if (newball) newball->imageHandle = (newball->typeId == TYPE_BALL0) ? ball0_handle :
 											(newball->typeId == TYPE_BALL1) ? ball1_handle :
@@ -129,6 +149,7 @@ int game() {
 
 	int start_time = GetNowCount(); // after MAX_SEC elapsed, force finish
 
+	srand((unsigned int) GetNowCount());
 	initPlayer();
 
 	char key_state[256];
@@ -147,7 +168,7 @@ int game() {
 
 		// new ball if needed
 		Ball* newball;
-		if (ball_num + 1 < MAX_BALLS && (newball = _createNewBallIfNeeded())) {
+		if (ball_num + 1 < MAX_BALLS && (newball = _createNewBallIfNeeded(start_time))) {
 			balls[ball_num] = newball;
 			ball_num++;
 		}
@@ -181,7 +202,7 @@ int game() {
 			break;
 		}
 	}
-	_freeResources(balls);
+	_deleteBalls(balls);
 	return ret;
 }
 
@@ -191,33 +212,28 @@ int launcher() {
 	ScreenFlip();
 	WaitKey();
 
-	// secret adjusting menu(press F1 to enter, F6 to be easier, F7 to be harder, F10 to exit)
+	// secret adjusting menu(press F1 to enter, F6 to be harder, F7 to be easier, F10 to exit)
 	char key_state[256];
 	GetHitKeyStateAll(key_state);
 	if (key_state[KEY_INPUT_F1]) {
-		DrawFormatString(0, 0, COLOR_MSG, "Entering configuration : %d", BALL_INTERVAL_MSEC);
+		DrawFormatString(0, 0, COLOR_MSG, "Entering configuration : %+d", getBallIntervalAdjustion());
 		ScreenFlip();
 		bool last_f6_pressed = false;
 		bool last_f7_pressed = false;
 		while (ProcessMessage() == 0) {
 			if (key_state[KEY_INPUT_F6] && !last_f6_pressed) {
-				uncomplicate();
-				ClearDrawScreen();
-				drawInstruction();
-				DrawFormatString(0, 0, GetColor(0, 0, 255), "Entering configuration : %d", BALL_INTERVAL_MSEC);
-				ScreenFlip();
+				complicate();
 				last_f6_pressed = true;
 			} else if (key_state[KEY_INPUT_F7] && !last_f7_pressed) {
-				complicate();
-				ClearDrawScreen();
-				drawInstruction();
-				DrawFormatString(0, 0, GetColor(255, 0, 0), "Entering configuration : %d", BALL_INTERVAL_MSEC);
-				ScreenFlip();
+				uncomplicate();
 				last_f7_pressed = true;
-			} else if (key_state[KEY_INPUT_F10]) break;
+			} else if (key_state[KEY_INPUT_F10]) break; // press F10 to exit the menu
+			ClearDrawScreen();
+			drawInstruction();
+			DrawFormatString(0, 0, COLOR_MSG, "Entering configuration : %+d", getBallIntervalAdjustion());
+			ScreenFlip();
 			if (!key_state[KEY_INPUT_F6]) last_f6_pressed = false;
 			if (!key_state[KEY_INPUT_F7]) last_f7_pressed = false;
-		
 			GetHitKeyStateAll(key_state);
 		}
 	}
@@ -235,6 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (result == RESULT_EXIT) break;
 		}
 	}
+	_freeResources();
 
 	DxLib_End();
 
