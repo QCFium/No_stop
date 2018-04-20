@@ -47,7 +47,3 @@ extern int BALL_INTERVAL_MSEC; // time interval between a ball created and the n
 #define TIMEOVER_STR "クリア(%d秒間生き残りました)"
 #define SCORE_STR "スコア : "
 #define ANYKEY_STR "何かキーを押してください..."
-
-void easier();
-
-void harder();
