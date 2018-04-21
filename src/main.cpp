@@ -23,21 +23,19 @@ bool _initWindow() {
 	SetOutApplicationLogValidFlag(FALSE); // enable logging into a file
 #endif
 
-	if (DxLib_Init() == -1 || 
-		SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK) return false;
+	if (SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK) return false;
 
 #ifdef WINDOW_MODE
 	SetDoubleStartValidFlag(TRUE); // allow double starting
 	if (
 		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
 		SetWindowSize(SCREEN_SIZE_X, SCREEN_SIZE_Y) == -1 ||
-		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1)
+		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1) ||
+		SetWindowText(APPLICATION_NAME) != 0)
 		return false;
 #endif
 
-	if (
-		SetDrawScreen(DX_SCREEN_BACK) == -1 || // draw to backside
-		SetWindowText(APPLICATION_NAME) != 0)
+	if (DxLib_Init() == -1 || SetDrawScreen(DX_SCREEN_BACK) == -1) // draw to backside
 		return false;
 
 	return true;
