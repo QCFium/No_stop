@@ -216,7 +216,7 @@ int launcher() {
 	char key_state[256];
 	GetHitKeyStateAll(key_state);
 	if (key_state[KEY_INPUT_F1]) {
-		DrawFormatString(0, 0, COLOR_MSG, "Entering configuration : %+d", getBallIntervalAdjustion());
+		DrawFormatString(0, 0, COLOR_MSG, "ìÔà’ìxí≤êÆ : %+d", getBallIntervalAdjustion());
 		ScreenFlip();
 		bool last_f6_pressed = false;
 		bool last_f7_pressed = false;
@@ -230,7 +230,7 @@ int launcher() {
 			} else if (key_state[KEY_INPUT_F10]) break; // press F10 to exit the menu
 			ClearDrawScreen();
 			drawInstruction();
-			DrawFormatString(0, 0, COLOR_MSG, "Entering configuration : %+d", getBallIntervalAdjustion());
+			DrawFormatString(0, 0, COLOR_MSG, "ìÔà’ìxí≤êÆ : %+d", getBallIntervalAdjustion());
 			ScreenFlip();
 			if (!key_state[KEY_INPUT_F6]) last_f6_pressed = false;
 			if (!key_state[KEY_INPUT_F7]) last_f7_pressed = false;
