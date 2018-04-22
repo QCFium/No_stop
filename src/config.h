@@ -1,7 +1,7 @@
 #pragma once
 
 // application name
-#define APPLICATION_NAME "é~Ç‹ÇÍÇ‹ÇπÅ[ÇÒ"
+#define APPLICATION_NAME "Ç∆Ç‹ÇÍÇ‹ÇπÅ[ÇÒ"
 
 // about screen
 // #define WINDOW_MODE
@@ -15,6 +15,15 @@
 
 // logging
 // #define ENABLE_LOG
+
+// distribution mode
+#define DIST_MODE
+
+// key input redirection
+#define KEY_UP(key_state)    (key_state[KEY_INPUT_UP]    || key_state[KEY_INPUT_W]) // Up or W
+#define KEY_DOWN(key_state)  (key_state[KEY_INPUT_DOWN]  || key_state[KEY_INPUT_S]) // Down or S
+#define KEY_LEFT(key_state)  (key_state[KEY_INPUT_LEFT]  || key_state[KEY_INPUT_A]) // Left or A
+#define KEY_RIGHT(key_state) (key_state[KEY_INPUT_RIGHT] || key_state[KEY_INPUT_D]) // Right or D
 
 // about game
 #define POINTS_PER_CATCH 10

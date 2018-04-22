@@ -34,8 +34,7 @@ void Ball::goNextPosition() {
 	x += speed_x;
 	y += speed_y;
 
-	// check if the ball is still in the window
-	if (rebound_num > rebounded_count) {
+	if (rebound_num > rebounded_count) { // check if still reboundable
 		// fix position
 		if (x < 0) x = 0;
 		else if (x >= SCREEN_SIZE_X) x = SCREEN_SIZE_X - 1;
@@ -51,11 +50,11 @@ void Ball::goNextPosition() {
 			speed_y = -speed_y;
 			rebounded_count++;
 		}
-	}
-	else {
+	} else {
+		// check if it's still in screen
 		if (x < -circle_r || y < -circle_r) inScreen = false;
-		if (x >= SCREEN_SIZE_X + circle_r) inScreen = false; // completely out of screen
-		if (y >= SCREEN_SIZE_Y + circle_r) inScreen = false; // completely out of screen
+		if (x >= SCREEN_SIZE_X + circle_r) inScreen = false;
+		if (y >= SCREEN_SIZE_Y + circle_r) inScreen = false;
 	}
 }
 

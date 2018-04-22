@@ -53,14 +53,14 @@ int getTimeElapsedFromLastIncrease() {
 
 void playerGoNextPosition(char* key_state) {
 	// change speed depending on key inputs
-	if (key_state[KEY_INPUT_RIGHT]) speed_x += PLAYER_SPEED_CHANGE;
-	else if (key_state[KEY_INPUT_LEFT]) speed_x -= PLAYER_SPEED_CHANGE;
-	if (key_state[KEY_INPUT_DOWN]) speed_y += PLAYER_SPEED_CHANGE;
-	else if (key_state[KEY_INPUT_UP]) speed_y -= PLAYER_SPEED_CHANGE;
+	if (KEY_RIGHT(key_state)) speed_x += PLAYER_SPEED_CHANGE;
+	else if (KEY_LEFT(key_state)) speed_x -= PLAYER_SPEED_CHANGE;
+	if (KEY_DOWN(key_state)) speed_y += PLAYER_SPEED_CHANGE;
+	else if (KEY_UP(key_state)) speed_y -= PLAYER_SPEED_CHANGE;
 
 	// DON'T STOP - the speed will never stay at 0
-	if (!key_state[KEY_INPUT_RIGHT] && !key_state[KEY_INPUT_LEFT] && !speed_x) speed_x = (rand() % 2) ? 1 : -1; // randomly 1 or -1
-	if (!key_state[KEY_INPUT_UP] && !key_state[KEY_INPUT_DOWN] && !speed_y) speed_y = (rand() % 2) ? 1 : -1; // randomly 1 or -1
+	if (!KEY_LEFT(key_state) && !KEY_RIGHT(key_state) && !speed_x) speed_x = (rand() % 2) ? 1 : -1; // randomly 1 or -1
+	if (!KEY_UP(key_state) && !KEY_DOWN(key_state) && !speed_y) speed_y = (rand() % 2) ? 1 : -1; // randomly 1 or -1
 
 	// fix speed
 	if (speed_x > PLAYER_SPEED_MAX) speed_x = PLAYER_SPEED_MAX;
@@ -79,6 +79,6 @@ void playerGoNextPosition(char* key_state) {
 	else if (y < 0) y = 0;
 
 	// fix speed again(if reached to the edge, rebound a little)
-	if (x == 0 || x >= SCREEN_SIZE_X - 1) speed_x /= -3;
-	if (y == 0 || y >= SCREEN_SIZE_Y - 1) speed_y /= -3;
+	if (x == 0 || x >= SCREEN_SIZE_X - 1) speed_x /= -2;
+	if (y == 0 || y >= SCREEN_SIZE_Y - 1) speed_y /= -2;
 }
