@@ -46,6 +46,8 @@ void loadConfig() {
 	FILE* fp;
 	fopen_s(&fp, "config.txt", "r");
 	if (!fp) ball_interval_adjust = 0;
-	else fscanf_s(fp, "%d", &ball_interval_adjust);
-	fclose(fp);
+	else {
+		fscanf_s(fp, "%d", &ball_interval_adjust);
+		fclose(fp);
+	}
 }
