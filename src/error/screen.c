@@ -1,3 +1,9 @@
+/* 
+	This file is part of 止まれませーん.
+	Copyright (c) 2018 QCFium
+	All rights reserved
+*/
+
 #include "screen.h"
 
 inline void setTerminalColor(WORD color) {
