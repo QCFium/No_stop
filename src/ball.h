@@ -44,7 +44,7 @@ public:
 				rebounded_count++;
 			}
 			if (y == 0 || y == SCREEN_SIZE_Y - 1) {
-				speed_x = -speed_x;
+				speed_y = -speed_y;
 				rebounded_count++;
 			}
 		} else {
