@@ -230,6 +230,7 @@ int launcher() {
 			if (!key_state[KEY_INPUT_F6]) last_f6_pressed = false;
 			if (!key_state[KEY_INPUT_F7]) last_f7_pressed = false;
 		}
+		saveConfig();
 	}
 
 	return game();
@@ -240,6 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	else if (!_initWindow()) error("Failed to init window");
 	else if (!_loadImages()) error("failed to load images");
 	else {
+		loadConfig();
 #ifdef DIST_MODE
 		while (1) {
 			int result = launcher();

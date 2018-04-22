@@ -93,3 +93,5 @@ int getScreenSizeX();
 int getScreenSizeY();
 
 bool initConfig();
+bool saveConfig();
+void loadConfig();

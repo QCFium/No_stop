@@ -32,3 +32,20 @@ int getTreasureIntervalMsec(int start_time) {
 
 void complicate() { ball_interval_adjust -= 50; }
 void uncomplicate() { ball_interval_adjust += 50; }
+
+bool saveConfig() {
+	FILE* fp;
+	fopen_s(&fp, "config.txt", "w");
+	if (!fp) return false;
+	fprintf(fp, "%d", ball_interval_adjust);
+	fclose(fp);
+	return true;
+}
+
+void loadConfig() {
+	FILE* fp;
+	fopen_s(&fp, "config.txt", "r");
+	if (!fp) ball_interval_adjust = 0;
+	else fscanf_s(fp, "%d", &ball_interval_adjust);
+	fclose(fp);
+}
