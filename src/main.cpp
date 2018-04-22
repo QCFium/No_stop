@@ -10,10 +10,10 @@
 // graphic handles
 int heart_handle;
 int treasure_handle;
-int ball0_handle;
-int ball1_handle;
-int ball2_handle;
-int ball3_handle;
+int orange_ball_handle;
+int purple_ball_handle;
+int yellow_ball_handle;
+int blue_ball_handle;
 
 #define TREASURE_INTERVAL_MSEC(t) getTreasureIntervalMsec(t)
 #define BALL_INTERVAL_MSEC(t) getBallIntervalMsec(t)
@@ -42,35 +42,17 @@ bool _initWindow() {
 }
 
 bool _loadImages() {
-	heart_handle    = LoadGraph(RESOURCE_DIR_NAME "/heart.png");
-	treasure_handle = LoadGraph(RESOURCE_DIR_NAME "/treasure.png");
-	ball0_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball0.png");
-	ball1_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball1.png");
-	ball2_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball2.png");
-	ball3_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball3.png");
-	return (heart_handle != -1 && treasure_handle != -1 &&
-			ball0_handle != -1 && ball1_handle != -1 &&
-			ball2_handle != -1 && ball3_handle != -1);
+	heart_handle       = LoadGraph(RESOURCE_DIR_NAME "/heart.png");
+	treasure_handle    = LoadGraph(RESOURCE_DIR_NAME "/treasure.png");
+	orange_ball_handle = LoadGraph(RESOURCE_DIR_NAME "/ball0.png");
+	purple_ball_handle = LoadGraph(RESOURCE_DIR_NAME "/ball1.png");
+	yellow_ball_handle = LoadGraph(RESOURCE_DIR_NAME "/ball2.png");
+	blue_ball_handle   = LoadGraph(RESOURCE_DIR_NAME "/ball3.png");
+
+	return (heart_handle       != -1 && treasure_handle    != -1 &&
+			orange_ball_handle != -1 && purple_ball_handle != -1 &&
+			yellow_ball_handle != -1 && blue_ball_handle   != -1);
 }
-
-void _freeResources() {
-	// unload graphics
-	DeleteGraph(heart_handle);
-	DeleteGraph(treasure_handle);
-	DeleteGraph(ball0_handle);
-	DeleteGraph(ball1_handle);
-	DeleteGraph(ball2_handle);
-	DeleteGraph(ball3_handle);
-
-	// just to be safe
-	heart_handle = -1;
-	treasure_handle = -1;
-	ball0_handle = -1;
-	ball1_handle = -1;
-	ball2_handle = -1;
-	ball3_handle = -1;
-}
-
 
 void _deleteBalls(Ball* balls[]) {
 	for (int i = 0; i < MAX_BALLS; i++) {
@@ -116,19 +98,33 @@ Ball* _createNewBallIfNeeded(int start_time) {
 
 	// treasure ball creation
 	if (last_treasure_created_time < GetNowCount() - TREASURE_INTERVAL_MSEC(start_time)) {
-		Ball* new_treasure = newTreasureBall();
-		if (new_treasure) new_treasure->imageHandle = treasure_handle;
+		Ball* new_treasure = new TreasureBall();
+		if (new_treasure) new_treasure->imageHandle = treasure_handle; // set grpahic handle
 		last_treasure_created_time = GetNowCount();
 		return new_treasure;
 	}
 
 	// normal ball(enemy) creation
 	if (last_ball_created_time < GetNowCount() - BALL_INTERVAL_MSEC(start_time)) { // interval from the last creation
-		Ball* newball = newBall();
-		if (newball) newball->imageHandle = (newball->typeId == TYPE_BALL0) ? ball0_handle :
-											(newball->typeId == TYPE_BALL1) ? ball1_handle :
-											(newball->typeId == TYPE_BALL2) ? ball2_handle :
-											(newball->typeId == TYPE_BALL3) ? ball3_handle : -1;
+		static const int BALL_ORANGE = 0;
+		static const int BALL_PURPLE = 1;
+		static const int BALL_YELLOW = 2;
+		static const int BALL_BLUE = 3;
+
+		int type = rand() % 4;
+
+		Ball* newball;
+		if (type == BALL_ORANGE) newball = new OrangeBall();
+		else if (type == BALL_PURPLE) newball = new PurpleBall();
+		else if (type == BALL_YELLOW) newball = new YellowBall();
+		else if (type == BALL_BLUE) newball = new BlueBall();
+		else newball = NULL; // unexpected
+
+
+		if (newball) newball->imageHandle = (type == BALL_ORANGE) ? orange_ball_handle :
+											(type == BALL_PURPLE) ? purple_ball_handle :
+											(type == BALL_YELLOW) ? yellow_ball_handle :
+											(type == BALL_BLUE)   ? blue_ball_handle   : -1;
 		last_ball_created_time = GetNowCount();
 		return newball;
 	}
@@ -249,7 +245,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (result == RESULT_EXIT) break;
 		}
 	}
-	_freeResources();
 
 	DxLib_End();
 
