@@ -20,7 +20,7 @@ int ball3_handle;
 
 bool _initWindow() {
 #ifndef ENABLE_LOG
-	SetOutApplicationLogValidFlag(FALSE); // enable logging into a file
+	SetOutApplicationLogValidFlag(FALSE); // disable logging into a file
 #endif
 
 	if (SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32) != DX_CHANGESCREEN_OK) return false;
@@ -28,7 +28,7 @@ bool _initWindow() {
 #ifdef WINDOW_MODE
 	SetDoubleStartValidFlag(TRUE); // allow double starting
 	if (
-		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK || // window mode
+		ChangeWindowMode(TRUE) != DX_CHANGESCREEN_OK ||
 		SetWindowSize(SCREEN_SIZE_X, SCREEN_SIZE_Y) == -1 ||
 		SetWindowSizeChangeEnableFlag(FALSE, FALSE) == -1) ||
 		SetWindowText(APPLICATION_NAME) != 0)
@@ -42,13 +42,13 @@ bool _initWindow() {
 }
 
 bool _loadImages() {
-	heart_handle = LoadGraph(RESOURCE_DIR_NAME "/heart.png");
+	heart_handle    = LoadGraph(RESOURCE_DIR_NAME "/heart.png");
 	treasure_handle = LoadGraph(RESOURCE_DIR_NAME "/treasure.png");
-	ball0_handle = LoadGraph(RESOURCE_DIR_NAME "/ball0.png");
-	ball1_handle = LoadGraph(RESOURCE_DIR_NAME "/ball1.png");
-	ball2_handle = LoadGraph(RESOURCE_DIR_NAME "/ball2.png");
-	ball3_handle = LoadGraph(RESOURCE_DIR_NAME "/ball3.png");
-	return (heart_handle != -1 && treasure_handle != 0 &&
+	ball0_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball0.png");
+	ball1_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball1.png");
+	ball2_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball2.png");
+	ball3_handle    = LoadGraph(RESOURCE_DIR_NAME "/ball3.png");
+	return (heart_handle != -1 && treasure_handle != -1 &&
 			ball0_handle != -1 && ball1_handle != -1 &&
 			ball2_handle != -1 && ball3_handle != -1);
 }
@@ -70,6 +70,7 @@ void _freeResources() {
 	ball2_handle = -1;
 	ball3_handle = -1;
 }
+
 
 void _deleteBalls(Ball* balls[]) {
 	for (int i = 0; i < MAX_BALLS; i++) {
@@ -171,10 +172,6 @@ int game() {
 			ball_num++;
 		}
 
-		// fps handling
-		while (last_frame_time + 33 > GetNowCount()); // run at 30fps
-		last_frame_time = GetNowCount();
-
 		// draw
 		ClearDrawScreen();
 		drawBalls(balls);
@@ -182,6 +179,10 @@ int game() {
 		drawScore();
 		drawHearts(heart_handle);
 		drawTimeLeft(start_time);
+
+		// fps handling
+		while (last_frame_time + 33 > GetNowCount()); // run at 30fps
+		last_frame_time = GetNowCount();
 		ScreenFlip();
 
 		// finish if needed
@@ -215,10 +216,11 @@ int launcher() {
 	GetHitKeyStateAll(key_state);
 	if (key_state[KEY_INPUT_F1]) {
 		DrawFormatString(0, 0, COLOR_MSG, "ìÔà’ìxí≤êÆ : %+d", getBallIntervalAdjustion());
-		ScreenFlip();
 		bool last_f6_pressed = false;
 		bool last_f7_pressed = false;
 		while (ProcessMessage() == 0) {
+			ScreenFlip();
+			GetHitKeyStateAll(key_state);
 			if (key_state[KEY_INPUT_F6] && !last_f6_pressed) {
 				complicate();
 				last_f6_pressed = true;
@@ -229,10 +231,8 @@ int launcher() {
 			ClearDrawScreen();
 			drawInstruction();
 			DrawFormatString(0, 0, COLOR_MSG, "ìÔà’ìxí≤êÆ : %+d", getBallIntervalAdjustion());
-			ScreenFlip();
 			if (!key_state[KEY_INPUT_F6]) last_f6_pressed = false;
 			if (!key_state[KEY_INPUT_F7]) last_f7_pressed = false;
-			GetHitKeyStateAll(key_state);
 		}
 	}
 

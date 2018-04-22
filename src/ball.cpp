@@ -21,7 +21,6 @@ public:
 	OrangeBall() {
 		typeId = TYPE_BALL0;
 		circle_r = 15;
-		rebound_num = 0;
 	}
 };
 
@@ -30,7 +29,6 @@ public:
 	PurpleBall() {
 		typeId = TYPE_BALL1;
 		circle_r = 10;
-		rebound_num = 0;
 	}
 };
 
@@ -39,7 +37,6 @@ public:
 	YellowBall() {
 		typeId = TYPE_BALL2;
 		circle_r = 30;
-		rebound_num = 0;
 	}
 };
 
@@ -50,7 +47,6 @@ public:
 		circle_r = 15;
 		rebound_num = 1;
 	}
-
 };
 
 
@@ -114,10 +110,10 @@ Ball* newTreasureBall() {
 	Ball* ball = new TreasureBall();
 	if (!ball) return NULL;
 	
-	// treasures are always start to move from the edge of windows
-	ball->x = (rand() % 2) ? 0 : SCREEN_SIZE_X;
-	ball->y = (rand() % 2) ? 0 : SCREEN_SIZE_Y;
-	ball->speed_x = rand() % 5 + 2;
-	ball->speed_y = rand() % 5 + 2;
+	// treasures always start to move from the edge of windows
+	ball->x = (rand() % 2) ? 0 : SCREEN_SIZE_X; // the leftest or the rightest
+	ball->y = (rand() % 2) ? 0 : SCREEN_SIZE_Y; // the top or the bottom
+	ball->speed_x = TREASURE_SPEED_RANDOM;
+	ball->speed_y = TREASURE_SPEED_RANDOM;
 	return ball;
 }
