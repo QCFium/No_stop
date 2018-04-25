@@ -125,6 +125,7 @@ void drawInstruction() {
 	const char* instruction_str4 = "残りライフが0になるとゲームオーバーです。";
 	const char* instruction_str5 = "開始から%d秒経っても終わりです。";
 	const char* instruction_str6 = "つまり%d秒以内に他のボールに当たらずに何個宝を回収できるかが勝負です";
+	const char* instruction_str7 = "Escキーを押すと終了できます。";
 
 	int width = GetDrawFormatStringWidth(instruction_str1); // hacky(only checking about str1)
 	int str_x = (SCREEN_SIZE_X - width) / 2;
@@ -136,5 +137,6 @@ void drawInstruction() {
 	DrawFormatString(str_x, str_y + 60, COLOR_MSG, instruction_str4);
 	DrawFormatString(str_x, str_y + 80, COLOR_MSG, instruction_str5, MAX_SEC);
 	DrawFormatString(str_x, str_y + 100, GetColor(255, 255, 0), instruction_str6, MAX_SEC);
+	DrawFormatString(str_x, str_y + 140, COLOR_MSG, instruction_str7);
 	_drawAnykeyMessage();
 }

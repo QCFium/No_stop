@@ -210,6 +210,7 @@ int launcher() {
 	// secret adjusting menu(press F1 to enter, F6 to be harder, F7 to be easier, F10 to exit)
 	char key_state[256];
 	GetHitKeyStateAll(key_state);
+	if (key_state[KEY_INPUT_ESCAPE]) return RESULT_EXIT;
 	if (key_state[KEY_INPUT_F1]) {
 		DrawFormatString(0, 0, COLOR_MSG, "ìÔà’ìxí≤êÆ : %+d", getBallIntervalAdjustion());
 		bool last_f6_pressed = false;
